@@ -33,10 +33,18 @@ if ($qrycheck->num_rows > 0){
 
 if (isset($_GET['course_title'])){
   $course_title = $_GET['course_title'];
-
 } else {
-echo "Error has occured"; die();
-}
+  echo "Error has occured"; 
+} 
+
+
+/*$no_of_records_per_page = 1;
+
+$total_pages_sql = "SELECT COUNT(*) FROM Questions WHERE `course_title`='".$course_title."' LIMIT 10";
+$result = $conn->query($total_pages_sql);
+$total_rows = $result->fetch_array()[0];
+$total_pages = ceil($total_rows / $no_of_records_per_page);*/
+
 
 ?>
 <!DOCTYPE html>
@@ -107,7 +115,10 @@ hr {
           <div class="row">
             <div class="col-md-8">
               <h4 style="text-decoration: underline;"><?php echo "Course Title: " . " " . $course_title; ?></h4>
-              <p><b>Instructions:</b> attempts all Questions within the limited time provided. You have 2mins for this session.</p>
+              <p>Total Number of Questions: 10</p>
+              <p>Total time given: 2 minutes</p>
+              <p style="color: #880000; font-size: 16px;">CBT Instructions:</p> 
+              <p>Attempts all Questions within the limited time provided. You have 2mins for this session.</p>
             </div>
             <div class="col-md-4">
               <div class="cta-btn">
@@ -120,45 +131,105 @@ hr {
               <button class="btn btn-info" id="mybut" onclick="myFunction()">START EXAM</button>
             </div>
           </div></center><br>
+          <h4 style="color: #880000; font-size: 18px; text-transform: uppercase;" id="examSession">Exam now in session...</h4>
           <div id="MyDiv" style="max-height: 500px; overflow-x: auto; border: 0px solid #CECECE; background: #f4f4f4; padding: 18px 18px 18px 18px; border-radius: 10px;">
-          <div class="row">
+            <div class="row">
             <div class="col-md-12">
              <form method="POST" role="form" id="form" action="result.php">
              <?php
-              // fetch out questions and answers from the database
-              $qryquestions="SELECT * FROM questions WHERE `course_title`='".$course_title."' LIMIT 10";
+              $number_of_question = 10;
+              $qryquestions="SELECT * FROM questions WHERE `course_title`='".$course_title."' ORDER BY RAND() LIMIT 10";
               $qryquestionscheck=$conn->query($qryquestions);
+              $i = 1;
               foreach ($qryquestionscheck as $row){
-                $id = $row['id'];
+                $question_id = $row['question_id'];
                 $questions = $row['questions'];
                 $optionA = $row['option_A'];
                 $optionB = $row['option_B'];
                 $optionC= $row['option_C'];
                 $optionD = $row['option_D'];
-                $answer = $row['answer'];
+                $correct_answer = $row['answer'];
                 $_SESSION['course_title'] = $course_title;
+
+                $remainder = $qryquestionscheck->num_rows/$number_of_question;
+                //echo $remainder; die();
                
              ?>
-             <div class="form-group">
-                <label style="font-weight: normal; text-align: justify;"><b><?php echo "Question" . " " . $counter++; ?></b>&nbsp<?php echo $questions; ?></label><br>
-                <div id="quiz-options">
-                  <label style="font-weight: normal; cursor: pointer;">
-                    <input type="checkbox" name="option[]" value="A"> <?php echo $optionA; ?>
-                  </label><br>
-                  <label style="font-weight: normal; cursor: pointer;">
-                    <input type="checkbox" name="option[]" value="B"> <?php echo $optionB; ?>
-                  </label><br>
-                  <label style="font-weight: normal; cursor: pointer;">
-                    <input type="checkbox" name="option[]" value="C"> <?php echo $optionC; ?>
-                  </label><br>
-                  <label style="font-weight: normal; cursor: pointer;">
-                    <input type="checkbox" name="option[]" value="D"> <?php echo $optionD; ?>
-                  </label><br>
+             <?php if($i==1){?>
+              <div id='question<?php echo $i;?>' class='cont'>
+               <div class="form-group">
+                  <label style="font-weight: normal; text-align: justify;" class="questions"><b><?php echo "Question" . " " . $counter++; ?></b>&nbsp<?php echo $questions; ?></label><br>
+                  <div id="quiz-options">
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="A"> <?php echo $optionA; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="B"> <?php echo $optionB; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="C"> <?php echo $optionC; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="D"> <?php echo $optionD; ?>
+                    </label><br>  
+                    <input type="hidden" name="correct_answer[]" value="<?php echo $correct_answer; ?>">              
+                    <button id='next<?php echo $i;?>' class='next btn btn-default pull-right' type='button' >Next</button>
+                    
+                  </div>
                 </div>
-                <hr>
-             </div><br>
-             <?php } ?>
-            <input class="btn btn-primary pull-right"  name="submit" type="submit" value="Submit">
+              </div>
+              <?php }elseif($i<1 || $i<$qryquestionscheck->num_rows){?>
+                <div id='question<?php echo $i;?>' class='cont'>
+               <div class="form-group">
+                  <label style="font-weight: normal; text-align: justify;" class="questions"><b><?php echo "Question" . " " . $counter++; ?></b>&nbsp<?php echo $questions; ?></label><br>
+                  <div id="quiz-options">
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="A"> <?php echo $optionA; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="B"> <?php echo $optionB; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="C"> <?php echo $optionC; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="D"> <?php echo $optionD; ?>
+                    </label><br>
+                    <input type="hidden" name="correct_answer[]" value="<?php echo $correct_answer; ?>">
+                    <br>                  
+                    <button id='pre<?php echo $i;?>' class='previous btn btn-default' type='button'>Previous</button>                    
+                    <button id='next<?php echo $i;?>' class='next btn btn-default pull-right' type='button' >Next</button>
+                  </div>
+               </div>
+              </div>
+            <?php }elseif(( $remainder < 1 ) || ( $i == $number_of_question && $remainder == 1 ) ){?>
+                <div id='question<?php echo $i;?>' class='cont'>
+               <div class="form-group">
+                  <label style="font-weight: normal; text-align: justify;" class="questions"><b><?php echo "Question" . " " . $counter++; ?></b>&nbsp<?php echo $questions; ?></label><br>
+                  <div id="quiz-options">
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="A"> <?php echo $optionA; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="B"> <?php echo $optionB; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="C"> <?php echo $optionC; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="D"> <?php echo $optionD; ?>
+                    </label><br>
+                    <input type="hidden" name="correct_answer[]" value="<?php echo $correct_answer; ?>"> 
+                     <br>      
+                    <button id='pre<?php echo $i;?>' class='previous btn btn-default' type='button'>Previous</button>                    
+                    <input class='btn btn-info pull-right' value="Finish & Submit" name="submit" type='submit'>
+                  </div>
+               </div>
+              </div>
+              <?php } 
+            $i++;} ?>
+             
+            <!--<input class="btn btn-primary pull-right"  name="submit" type="submit" value="Submit">-->
             </form>
             </div>
             
@@ -177,7 +248,8 @@ hr {
 </div>
 <div class="col-md-6">
   <div class="footertext">
-    CBT Software Powered by Amjos &copy; 2018
+    <p style="font-size: 13px; font-family: arial;"><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" style="color: #000000;"><img alt="Creative Commons License" style="border-width:0" src="images/nc.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a></p>
+ Powered by Amjos &copy; 2018. All Right Reserved
   </div>
  </div>
  <div class="col-md-3">
@@ -202,14 +274,17 @@ $(document).ready(function() {
 function myFunction() {
   var x = document.getElementById("MyDiv");
   var b = document.getElementById("mybut");
+  var c = document.getElementById("examSession");
   if (x.style.display === "none") { 
     b.style.visibility = 'hidden';
     x.style.display = "block";
+    c.style.display ="block";
     startTimer();
   }
 }
 window.onload = function () {
   document.getElementById('MyDiv').style.display = 'none';
+  document.getElementById('examSession').style.display = 'none';
 };
 
 /*
@@ -232,27 +307,38 @@ function startTimer() {
     var min = Math.floor(centisecondsRemaining / 100 / 60);
     var sec = zeroFill(Math.floor(centisecondsRemaining / 100 % 60));
     //var cs = zeroFill(centisecondsRemaining % 100);
-    //quiz.state.timer.text(min + ":" + sec + ":" + cs);
     document.getElementById('timer').innerHTML = hr + "h" + ":" + min + "m" + ":" + sec + "s";
     count++;
-    //console.log(document.getElementById('timer'));
     if (centisecondsRemaining === 0) {
       clearInterval(interval);
       alert('Your Time is up... Click OK to continue');
-      /*swal({
-          title: "Opps!",
-          text: "Your time is up... Click OK to continue",
-          type: "warning",
-          closeOnClickOutside: false,
-      },
-      function(){
-        //redirect to result page
-        window.location.href = "result.php";
-      });*/
       window.location = 'result.php';
     }
   }, 10);
 }
+
+$('.cont').addClass('hide');
+    count=$('.questions').length;
+     $('#question'+1).removeClass('hide');
+
+     $(document).on('click','.next',function(){
+         element=$(this).attr('id');
+         last = parseInt(element.substr(element.length - 1));
+         nex=last+1;
+         $('#question'+last).addClass('hide');
+
+         $('#question'+nex).removeClass('hide');
+     });
+
+     $(document).on('click','.previous',function(){
+         element=$(this).attr('id');
+         last = parseInt(element.substr(element.length - 1));
+         pre=last-1;
+         $('#question'+last).addClass('hide');
+
+         $('#question'+pre).removeClass('hide');
+     });
+
 </script>
 
 </body>

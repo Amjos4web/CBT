@@ -468,7 +468,15 @@ section.cms-boxes .cms-boxes-items:hover {
 .center{
 	margin:auto;
 }
-
+#loading { 
+width: 100%; 
+position: absolute;
+}
+#pagination
+{
+text-align:center;
+margin-left:120px;
+}
 /*.page-title::after {
 	content:'';
 	height:2px;

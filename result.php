@@ -55,43 +55,31 @@ if (isset($_POST['submit'])){
     if (confirmSubmit == true){
         </script><?php*/
         $option_array = $_POST['option'];
-        $each_question_id = $_POST["question_id"];
-        echo json_encode($each_question_id).'<br/>';
-        $each_question_id_string = implode(',', array_map('intval', $each_question_id));
-        //$each_question_id_string = trim($each_question_id_string);
-        //$each_question_id_array = explode(".", $each_question_id_string);
-        echo $each_question_id_string . '<br>';
-        //exit();
+        $each_question_correct_answer = $_POST["correct_answer"];
+        //echo json_encode($each_question_correct_answer).'<br/>';
+        //convert answers to string
+        $each_question_correct_answer_string = implode(',', $each_question_correct_answer);
+        //echo $each_question_correct_answer_string . '<br>';
 
         if (empty($option_array) == false){
-          //select answer
-          $query = "SELECT * FROM answers WHERE `question_id` = '".$each_question_id_string."'";
-          $checkquery = $conn->query($query);
-          $correct_option = array();
-
-          while ($answerrows = $checkquery->fetch_assoc()){
-            $correct_option[] = $answerrows['answer'];
+          //convert answers back to array
+          
+          $correct_answer_array = explode(",", $each_question_correct_answer_string);
+          //echo json_encode($correct_answer_array).'<br/>';
+          $answered=0;
+          $unanswered=0;
+          if ($_POST['option'] == ""){
+            $unanswered++;
+          } elseif ($_POST['option'] !== "") {
+            $answered++;
           }
-
-          /*foreach ($checkquery as $answerrows) {
-            # code...
-            $correct_option[] = $answerrows['answer'];
-          }*/
-
-
-          $correct_string = implode(",", $correct_option);
-          echo $correct_string. '<br>';
-          
-          $correct_array = explode(",", $correct_string);
-          echo json_encode($correct_array).'<br/>';
-          
-          
-          $result= array_intersect_assoc($correct_array,$option_array);
+          //use array_intersect to check for corresponding answers
+          $result= array_intersect_assoc($correct_answer_array,$option_array);
           $resultcount = count($result);
           $noOfQuestions = "10";
           $wrongAnswers = $noOfQuestions - $resultcount;
-          echo $resultcount;
-          exit();
+          //echo $resultcount;
+          //exit();
 
           $date_taken = date('Y-m-d:h:i:s');
 
@@ -181,8 +169,8 @@ if (isset($_POST['submit'])){
             <div class="col-md-6">
               <table class="table table-bordered" style="font-family: arial;">
                 <tr class="success">
-                  <td width="50%">Total Attempted Questions</td>
-                  <td width="50%" style="text-align: center;">10</td>
+                  <td width="50%">Total Number of Question</td>
+                  <td width="50%" style="text-align: center;"><?php echo $noOfQuestions; ?></td>
                 </tr>
                 <tr class="info">
                   <td width="50%">Answered Correctly</td>
@@ -192,6 +180,14 @@ if (isset($_POST['submit'])){
                   <td width="50%">Answered Wrongly</td>
                   <td width="50%" style="text-align: center;"><?php echo $wrongAnswers; ?></td>
                 </tr>
+                <!-- <tr class="success">
+                  <td width="50%">Attempted Questions</td>
+                  <td width="50%" style="text-align: center;"><?php echo $answered; ?></td>
+                </tr>
+                <tr class="info">
+                  <td width="50%">Unattempted Questions</td>
+                  <td width="50%" style="text-align: center;"><?php echo $unanswered; ?></td>
+                </tr>-->
                 <tr class="success">
                   <td width="50%">Total Score</td>
                   <td width="50%" style="text-align: center;"><?php echo $resultcount; ?></td>
@@ -226,7 +222,7 @@ if (isset($_POST['submit'])){
 </div>
 <div class="col-md-6">
   <div class="footertext">
-    <p style="font-size: 13px; font-family: arial;"><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" style="color: #000000;"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a></p>
+    <p style="font-size: 13px; font-family: arial;"><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" style="color: #000000;"><img alt="Creative Commons License" style="border-width:0" src="images/nc.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a></p>
  Powered by Amjos &copy; 2018. All Right Reserved
   </div>
  </div>

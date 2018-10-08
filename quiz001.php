@@ -33,10 +33,18 @@ if ($qrycheck->num_rows > 0){
 
 if (isset($_GET['course_title'])){
   $course_title = $_GET['course_title'];
-
 } else {
-echo "Error has occured"; die();
-}
+  echo "Error has occured"; 
+} 
+
+
+/*$no_of_records_per_page = 1;
+
+$total_pages_sql = "SELECT COUNT(*) FROM Questions WHERE `course_title`='".$course_title."' LIMIT 10";
+$result = $conn->query($total_pages_sql);
+$total_rows = $result->fetch_array()[0];
+$total_pages = ceil($total_rows / $no_of_records_per_page);*/
+
 
 ?>
 <!DOCTYPE html>
@@ -125,13 +133,14 @@ hr {
           </div></center><br>
           <h4 style="color: #880000; font-size: 18px; text-transform: uppercase;" id="examSession">Exam now in session...</h4>
           <div id="MyDiv" style="max-height: 500px; overflow-x: auto; border: 0px solid #CECECE; background: #f4f4f4; padding: 18px 18px 18px 18px; border-radius: 10px;">
-          <div class="row">
+            <div class="row">
             <div class="col-md-12">
              <form method="POST" role="form" id="form" action="result.php">
              <?php
-              // fetch out questions and answers from the database
+              $number_of_question = 10;
               $qryquestions="SELECT * FROM questions WHERE `course_title`='".$course_title."' ORDER BY RAND() LIMIT 10";
               $qryquestionscheck=$conn->query($qryquestions);
+              $i = 1;
               foreach ($qryquestionscheck as $row){
                 $question_id = $row['question_id'];
                 $questions = $row['questions'];
@@ -139,34 +148,91 @@ hr {
                 $optionB = $row['option_B'];
                 $optionC= $row['option_C'];
                 $optionD = $row['option_D'];
-                $answer = $row['answer'];
+                $correct_answer = $row['answer'];
                 $_SESSION['course_title'] = $course_title;
+
+                $remainder = $qryquestionscheck->num_rows/$number_of_question;
+                //echo $remainder; die();
                
              ?>
-             <div class="form-group">
-                <label style="font-weight: normal; text-align: justify;"><b><?php echo "Question" . " " . $counter++; ?></b>&nbsp<?php echo $questions; ?></label><br>
-                <div id="quiz-options">
-                  <label style="font-weight: normal; cursor: pointer;">
-                    <input type="checkbox" name="option[]" value="A"> <?php echo $optionA; ?>
-                  </label><br>
-                  <label style="font-weight: normal; cursor: pointer;">
-                    <input type="checkbox" name="option[]" value="B"> <?php echo $optionB; ?>
-                  </label><br>
-                  <label style="font-weight: normal; cursor: pointer;">
-                    <input type="checkbox" name="option[]" value="C"> <?php echo $optionC; ?>
-                  </label><br>
-                  <label style="font-weight: normal; cursor: pointer;">
-                    <input type="checkbox" name="option[]" value="D"> <?php echo $optionD; ?>
-                  </label><br>
-                  <input type="text" name="question_id[]" value="<?php echo $question_id; ?>">
+             <?php if($i==1){?>
+              <div id='question<?php echo $i;?>' class='cont'>
+               <div class="form-group">
+                  <label style="font-weight: normal; text-align: justify;" class="questions"><b><?php echo "Question" . " " . $counter++; ?></b>&nbsp<?php echo $questions; ?></label><br>
+                  <div id="quiz-options">
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="A"> <?php echo $optionA; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="B"> <?php echo $optionB; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="C"> <?php echo $optionC; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="D"> <?php echo $optionD; ?>
+                    </label><br>  
+                    <input type="hidden" name="correct_answer[]" value="<?php echo $correct_answer; ?>">              
+                    <button id='next<?php echo $i;?>' class='next btn btn-default pull-right' type='button' >Next</button>
+                    
+                  </div>
                 </div>
-                <hr>
-             </div><br>
-             <?php } ?>
-            <input class="btn btn-primary pull-right"  name="submit" type="submit" value="Submit">
+              </div>
+              <?php }elseif($i<1 || $i<$qryquestionscheck->num_rows){?>
+                <div id='question<?php echo $i;?>' class='cont'>
+               <div class="form-group">
+                  <label style="font-weight: normal; text-align: justify;" class="questions"><b><?php echo "Question" . " " . $counter++; ?></b>&nbsp<?php echo $questions; ?></label><br>
+                  <div id="quiz-options">
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="A"> <?php echo $optionA; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="B"> <?php echo $optionB; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="C"> <?php echo $optionC; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="D"> <?php echo $optionD; ?>
+                    </label><br>
+                    <input type="hidden" name="correct_answer[]" value="<?php echo $correct_answer; ?>">
+                    <br>                  
+                    <button id='pre<?php echo $i;?>' class='previous btn btn-default' type='button'>Previous</button>                    
+                    <button id='next<?php echo $i;?>' class='next btn btn-default pull-right' type='button' >Next</button>
+                  </div>
+               </div>
+              </div>
+            <?php }elseif(( $remainder < 1 ) || ( $i == $number_of_question && $remainder == 1 ) ){?>
+                <div id='question<?php echo $i;?>' class='cont'>
+               <div class="form-group">
+                  <label style="font-weight: normal; text-align: justify;" class="questions"><b><?php echo "Question" . " " . $counter++; ?></b>&nbsp<?php echo $questions; ?></label><br>
+                  <div id="quiz-options">
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="A"> <?php echo $optionA; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="B"> <?php echo $optionB; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="C"> <?php echo $optionC; ?>
+                    </label><br>
+                    <label style="font-weight: normal; cursor: pointer;">
+                      <input type="checkbox" name="option[]" value="D"> <?php echo $optionD; ?>
+                    </label><br>
+                    <input type="hidden" name="correct_answer[]" value="<?php echo $correct_answer; ?>"> 
+                     <br>      
+                    <button id='pre<?php echo $i;?>' class='previous btn btn-default' type='button'>Previous</button>                    
+                    <input class='btn btn-info pull-right' value="Finish & Submit" name="submit" type='submit'>
+                  </div>
+               </div>
+              </div>
+              <?php } 
+            $i++;} ?>
+             
+            <!--<input class="btn btn-primary pull-right"  name="submit" type="submit" value="Submit">-->
             </form>
             </div>
-            
+            <!--<p><?php echo count($remainder); ?> Of <?php echo $number_of_question; ?></p>-->
           </div>
         </div>
         </div>
@@ -182,7 +248,7 @@ hr {
 </div>
 <div class="col-md-6">
   <div class="footertext">
-    <p style="font-size: 13px; font-family: arial;"><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" style="color: #000000;"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a></p>
+    <p style="font-size: 13px; font-family: arial;"><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" style="color: #000000;"><img alt="Creative Commons License" style="border-width:0" src="images/nc.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a></p>
  Powered by Amjos &copy; 2018. All Right Reserved
   </div>
  </div>
@@ -236,32 +302,43 @@ function startTimer() {
   var count = 0;
 
   var interval = window.setInterval(function() {
-    var centisecondsRemaining = 72100 - count;
+    var centisecondsRemaining = 12100 - count;
     var hr = Math.floor((centisecondsRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     var min = Math.floor(centisecondsRemaining / 100 / 60);
     var sec = zeroFill(Math.floor(centisecondsRemaining / 100 % 60));
     //var cs = zeroFill(centisecondsRemaining % 100);
-    //quiz.state.timer.text(min + ":" + sec + ":" + cs);
     document.getElementById('timer').innerHTML = hr + "h" + ":" + min + "m" + ":" + sec + "s";
     count++;
-    //console.log(document.getElementById('timer'));
     if (centisecondsRemaining === 0) {
       clearInterval(interval);
       alert('Your Time is up... Click OK to continue');
-      /*swal({
-          title: "Opps!",
-          text: "Your time is up... Click OK to continue",
-          type: "warning",
-          closeOnClickOutside: false,
-      },
-      function(){
-        //redirect to result page
-        window.location.href = "result.php";
-      });*/
       window.location = 'result.php';
     }
   }, 10);
 }
+
+$('.cont').addClass('hide');
+    count=$('.questions').length;
+     $('#question'+1).removeClass('hide');
+
+     $(document).on('click','.next',function(){
+         element=$(this).attr('id');
+         last = parseInt(element.substr(element.length - 1));
+         nex=last+1;
+         $('#question'+last).addClass('hide');
+
+         $('#question'+nex).removeClass('hide');
+     });
+
+     $(document).on('click','.previous',function(){
+         element=$(this).attr('id');
+         last = parseInt(element.substr(element.length - 1));
+         pre=last-1;
+         $('#question'+last).addClass('hide');
+
+         $('#question'+pre).removeClass('hide');
+     });
+
 </script>
 
 </body>
