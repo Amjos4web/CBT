@@ -32,6 +32,7 @@ if ($qrycheck->num_rows > 0){
 }
 
 $course_title = $_SESSION['course_title'];
+$question_rowcount = $_SESSION['question_rowcount'];
 
 
 // fetch out questions and answers from the database
@@ -56,8 +57,8 @@ if (isset($_POST['submit'])){
         </script><?php*/
         $option_array = $_POST['option'];
         $each_question_correct_answer = $_POST["correct_answer"];
-        //echo json_encode($each_question_correct_answer).'<br/>';
-        //convert answers to string
+        //echo json_encode($each_question_correct_answer).'<br/>'; die();
+
         $each_question_correct_answer_string = implode(',', $each_question_correct_answer);
         //echo $each_question_correct_answer_string . '<br>';
 
@@ -66,31 +67,13 @@ if (isset($_POST['submit'])){
           
           $correct_answer_array = explode(",", $each_question_correct_answer_string);
           //echo json_encode($correct_answer_array).'<br/>';
-          $answered=0;
-          $unanswered=0;
-          if ($_POST['option'] == ""){
-            $unanswered++;
-          } elseif ($_POST['option'] !== "") {
-            $answered++;
-          }
           //use array_intersect to check for corresponding answers
           $result= array_intersect_assoc($correct_answer_array,$option_array);
           $resultcount = count($result);
-          $noOfQuestions = "10";
-          $wrongAnswers = $noOfQuestions - $resultcount;
-          //echo $resultcount;
-          //exit();
+          $wrongAnswers = $question_rowcount - $resultcount;
 
           $date_taken = date('Y-m-d:h:i:s');
 
-          // performance
-          if ($resultcount >= "7"){
-            $performance = "Excellent";
-          } else if ($resultcount >= "5") {
-            $performance = "Good";
-          } else if ($resultcount <= "4") {
-            $performance = "Poor";
-          }
 
           $insertresult = "INSERT INTO result (`username`, `fullname`, `result`, `matricNo`, `date_taken`, `course_title`) VALUES ('$username', '$fullname', '$resultcount', '$matricNo', '$date_taken', '$course_title')";
           $checkinsert = $conn->query($insertresult);
@@ -170,7 +153,7 @@ if (isset($_POST['submit'])){
               <table class="table table-bordered" style="font-family: arial;">
                 <tr class="success">
                   <td width="50%">Total Number of Question</td>
-                  <td width="50%" style="text-align: center;"><?php echo $noOfQuestions; ?></td>
+                  <td width="50%" style="text-align: center;"><?php echo $question_rowcount; ?></td>
                 </tr>
                 <tr class="info">
                   <td width="50%">Answered Correctly</td>
@@ -180,7 +163,7 @@ if (isset($_POST['submit'])){
                   <td width="50%">Answered Wrongly</td>
                   <td width="50%" style="text-align: center;"><?php echo $wrongAnswers; ?></td>
                 </tr>
-                <!-- <tr class="success">
+                <!--<tr class="success">
                   <td width="50%">Attempted Questions</td>
                   <td width="50%" style="text-align: center;"><?php echo $answered; ?></td>
                 </tr>
@@ -192,10 +175,10 @@ if (isset($_POST['submit'])){
                   <td width="50%">Total Score</td>
                   <td width="50%" style="text-align: center;"><?php echo $resultcount; ?></td>
                 </tr>
-                <tr class="warning">
+                <!--<tr class="warning">
                   <td width="50%">Performance</td>
                   <td width="50%" style="text-align: center;"><?php echo $performance; ?></td>
-                </tr>
+                </tr>-->
               </table>
             </div>
           </div><br><br>

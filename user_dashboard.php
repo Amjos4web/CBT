@@ -86,7 +86,7 @@ if ($qrycheck->num_rows > 0){
                        <div class="boxes-align">
                           <div class="small-box">
                              <i class="fa fa-history" style="font-size:70px; color: #000;">&nbsp;</i>
-                             <h5>History</h5>
+                             <h5>Exam History</h5>
                              <p></p>
                           </div>
                        </div>

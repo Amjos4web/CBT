@@ -31,54 +31,84 @@ if (isset($_POST['submit'])){
         $sqlinsert = "INSERT INTO student (`fullname`, `username`, `emailAddress`, `matricNo`, `dept`, `password`, `confirmPassword`) VALUES ('".$fullname."', '".$username."', '".$email."', '".$matricNo."', '".$department."', '".$password."', '".$confirmPass."')";
         $checksql = $conn->query($sqlinsert);
         if ($checksql){
-          /*echo '<script type="text/javascript">';
-          echo 'swal({
-            title: "Congratulations!",
-            text: "Registratulation Successful",
-            type: "sucess",
-            closeOnClickOutside: false,
-          },
-          function(){
-            window.location.href = "result.php";
-          })';
-          echo '</script>';*/
           echo '<script type="text/javascript">';
-          echo 'setTimeout(function () { swal("Congratulations!","Registratulation Successful","sucess");';
-          echo '}, 500);';
+          echo 'setTimeout(function () { 
+            swal({
+              title: "Congratulations!",
+              text: "Registration Successful",
+              type: "success",
+              confirmButtonText: "PROCEED TO LOGIN"
+            },
+            function(isConfirm){
+              if (isConfirm) {
+                window.location.href = "index.php";
+              }
+            }); }, 500)';
           echo '</script>';
         } else {
-          echo "Error has occured";
-        }
+          echo '<script type="text/javascript">';
+          echo 'setTimeout(function () { 
+          swal({
+            title: "Opps!",
+            text: "Error has occured",
+            type: "warning",
+            confirmButtonText: "RETRY"
+          },
+          function(isConfirm){
+            if (isConfirm) {
+              window.location.href = "register.php";
+            }
+          }); }, 500)';
+          echo '</script>';
+          }
         
       } else {
         echo '<script type="text/javascript">';
-        echo 'setTimeout(function () { swal("Error!","Password do not match","warning");';
-        echo '}, 500);';
+        echo 'setTimeout(function () { 
+        swal({
+          title: "Error!",
+          text: "Password do not match",
+          type: "warning",
+          confirmButtonText: "RETRY"
+        },
+        function(isConfirm){
+          if (isConfirm) {
+            window.location.href = "register.php";
+          }
+        }); }, 500)';
         echo '</script>';
       }
     } else {
       echo '<script type="text/javascript">';
-      echo 'setTimeout(function () { swal("Error!","Username "'.$username.'" Already Exist","warning");';
-      echo '}, 500);';
+      echo 'setTimeout(function () { 
+        swal({
+          title: "Error!",
+          text: "Username '.$username.' Already Exist",
+          type: "warning",
+          confirmButtonText: "RETRY"
+        },
+        function(isConfirm){
+          if (isConfirm) {
+            window.location.href = "register.php";
+          }
+        }); }, 500)';
       echo '</script>';
     }
   } else {
-     /* echo '<script type="text/javascript">';
-      echo 'swal({
-        title: "Error!",
-        text: "AlL fields are required",
-        type: "warning",
-        closeOnClickOutside: false,
-      },
-      setTimeout (function(){
-        window.location.href = "register.php";
-      }), 500)';
-      echo '</script>';*/
-
-      echo '<script type="text/javascript">';
-      echo 'setTimeout(function () { swal("Error!","AlL fields are required","warning");';
-      echo '}, 500);';
-      echo '</script>';
+    echo '<script type="text/javascript">';
+    echo 'setTimeout(function () { 
+        swal({
+          title: "Error!",
+          text: "All fields are required",
+          type: "warning",
+          confirmButtonText: "RETRY"
+        },
+        function(isConfirm){
+          if (isConfirm) {
+            window.location.href = "register.php";
+          }
+        }); }, 500)';
+    echo '</script>';
 
   }
 }

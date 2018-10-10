@@ -38,14 +38,6 @@ if (isset($_GET['course_title'])){
 } 
 
 
-/*$no_of_records_per_page = 1;
-
-$total_pages_sql = "SELECT COUNT(*) FROM Questions WHERE `course_title`='".$course_title."' LIMIT 10";
-$result = $conn->query($total_pages_sql);
-$total_rows = $result->fetch_array()[0];
-$total_pages = ceil($total_rows / $no_of_records_per_page);*/
-
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -151,7 +143,9 @@ hr {
                 $correct_answer = $row['answer'];
                 $_SESSION['course_title'] = $course_title;
 
-                $remainder = $qryquestionscheck->num_rows/$number_of_question;
+                $question_rowcount = $qryquestionscheck->num_rows;
+                $remainder = $question_rowcount/$number_of_question;
+                $_SESSION['question_rowcount'] = $question_rowcount;
                 //echo $remainder; die();
                
              ?>
@@ -171,14 +165,16 @@ hr {
                     </label><br>
                     <label style="font-weight: normal; cursor: pointer;">
                       <input type="checkbox" name="option[]" value="D"> <?php echo $optionD; ?>
-                    </label><br>  
-                    <input type="hidden" name="correct_answer[]" value="<?php echo $correct_answer; ?>">              
+                    </label><br> 
+                    <input type="hidden" name="correct_answer[]" value="<?php echo $correct_answer; ?>">
+                    <!-- CHANGED name to same "option[]", value to null and added class unchecked   -->
+                    <!--<input type="hidden" name="option[]" class="unchecked" value="null">-->              
                     <button id='next<?php echo $i;?>' class='next btn btn-default pull-right' type='button' >Next</button>
                     
                   </div>
                 </div>
               </div>
-              <?php }elseif($i<1 || $i<$qryquestionscheck->num_rows){?>
+              <?php }elseif($i<1 || $i<$question_rowcount){?>
                 <div id='question<?php echo $i;?>' class='cont'>
                <div class="form-group">
                   <label style="font-weight: normal; text-align: justify;" class="questions"><b><?php echo "Question" . " " . $counter++; ?></b>&nbsp<?php echo $questions; ?></label><br>
@@ -196,6 +192,9 @@ hr {
                       <input type="checkbox" name="option[]" value="D"> <?php echo $optionD; ?>
                     </label><br>
                     <input type="hidden" name="correct_answer[]" value="<?php echo $correct_answer; ?>">
+                    <!-- CHANGED name to same "option[]", value to null and added class unchecked   -->
+
+                    <!--<input type="hidden" name="option[]" class="unchecked" value="null">-->
                     <br>                  
                     <button id='pre<?php echo $i;?>' class='previous btn btn-default' type='button'>Previous</button>                    
                     <button id='next<?php echo $i;?>' class='next btn btn-default pull-right' type='button' >Next</button>
@@ -219,17 +218,26 @@ hr {
                     <label style="font-weight: normal; cursor: pointer;">
                       <input type="checkbox" name="option[]" value="D"> <?php echo $optionD; ?>
                     </label><br>
-                    <input type="hidden" name="correct_answer[]" value="<?php echo $correct_answer; ?>"> 
+                    <input type="hidden" name="correct_answer[]" value="<?php echo $correct_answer; ?>">
+                    <!-- CHANGED name to same "option[]", value to null and added class unchecked   -->
+
+                    <!--<input type="hidden" name="option[]" class="unchecked" value="null">-->  
                      <br>      
                     <button id='pre<?php echo $i;?>' class='previous btn btn-default' type='button'>Previous</button>                    
                     <input class='btn btn-info pull-right' value="Finish & Submit" name="submit" type='submit'>
                   </div>
                </div>
               </div>
-              <?php } 
+              <?php }
+              /*$option_array = $_POST['option'];
+              $unanswered = 0; 
+              if (in_array("null", $_POST['option'])){
+                $unanswered++;
+              }
+              $_SESSION['unanswered'] = $unanswered;
+              echo $unanswered = $_SESSION['unanswered']; die();*/
             $i++;} ?>
              
-            <!--<input class="btn btn-primary pull-right"  name="submit" type="submit" value="Submit">-->
             </form>
             </div>
             <!--<p><?php echo count($remainder); ?> Of <?php echo $number_of_question; ?></p>-->
@@ -267,6 +275,10 @@ $(document).ready(function() {
     $('input[type="checkbox"]').change(function(){ 
         var $this =  $(this).parents('#quiz-options').find('input[type="checkbox"]');
         $this.not(this).prop('checked', false);
+        // ADDED THIS script
+        // WILL DISABLE THE HIDDEN INPUT IF ANY OF THE CHECKBOX IS SELECTED
+        var $nextthis = $(this).parents('#quiz-options').find('.null');
+        $nextthis.attr('disabled', true);
     });    
 });
 
