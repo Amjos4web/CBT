@@ -71,11 +71,13 @@ if (isset($_POST['submit'])){
           $result= array_intersect_assoc($correct_answer_array,$option_array);
           $resultcount = count($result);
           $wrongAnswers = $question_rowcount - $resultcount;
+          $percentage_score = ($resultcount / $question_rowcount) * 100 . "%";
+          //echo $percentage_score; exit();
 
           $date_taken = date('Y-m-d:h:i:s');
 
 
-          $insertresult = "INSERT INTO result (`username`, `fullname`, `result`, `matricNo`, `date_taken`, `course_title`) VALUES ('$username', '$fullname', '$resultcount', '$matricNo', '$date_taken', '$course_title')";
+          $insertresult = "INSERT INTO result (`username`, `fullname`, `result`, `matricNo`, `date_taken`, `course_title`, `percentage_score`) VALUES ('$username', '$fullname', '$resultcount', '$matricNo', '$date_taken', '$course_title', '$percentage_score')";
           $checkinsert = $conn->query($insertresult);
           if (!$checkinsert){
             die ('Error inserting has occurred');
@@ -175,10 +177,10 @@ if (isset($_POST['submit'])){
                   <td width="50%">Total Score</td>
                   <td width="50%" style="text-align: center;"><?php echo $resultcount; ?></td>
                 </tr>
-                <!--<tr class="warning">
-                  <td width="50%">Performance</td>
-                  <td width="50%" style="text-align: center;"><?php echo $performance; ?></td>
-                </tr>-->
+                <tr class="warning">
+                  <td width="50%">Percentage Score</td>
+                  <td width="50%" style="text-align: center;"><?php echo $percentage_score; ?></td>
+                </tr>
               </table>
             </div>
           </div><br><br>

@@ -44,12 +44,14 @@ if ($qryresultcheck->num_rows > 0){
     $score= $row['result'];
     //$date_taken = $row['date_taken'];
     $date_taken=strftime("%d %b, %Y %H:%M:%S",strtotime($row['date_taken']));
+    $percentage = $row['percentage_score'];
 
     $results .= "<tr>";
     $results .= "<td><b>".$counter++. "</b></td>";
     $results .= "<td>".$date_taken. "</td>";
     $results .= "<td>".$course_title."</td>"; 
     $results .= "<td>".$score."</td>";
+    $results .= "<td>".$percentage."</td>";
     $results .= "</tr>";
   }
 } else {
@@ -107,6 +109,7 @@ if ($qryresultcheck->num_rows > 0){
                       <th>Date Of Exam</th>
                       <th>Course Title</th>
                       <th>Score</th>
+                      <th>Percentage Score</th>
                     </tr>
                   </thead>
                   <?php echo $results; ?>

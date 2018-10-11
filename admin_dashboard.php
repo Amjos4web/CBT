@@ -126,7 +126,7 @@ if (isset($_POST['add'])){
                        </div>
                     </div>
                  </div></a>
-                 <a href="#">
+                 <a href="edit_questions.php">
                 <!-- <a href="http://localhost/buth_net/pharmacySection/index.php">-->
                    <div class="col-md-4 cms-boxes-outer">
                     <div class="cms-boxes-items cms-features">

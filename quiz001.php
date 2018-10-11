@@ -174,7 +174,7 @@ hr {
                   </div>
                 </div>
               </div>
-              <?php }elseif($i<1 || $i<$question_rowcount){?>
+              <?php }elseif($i<$question_rowcount){?>
                 <div id='question<?php echo $i;?>' class='cont'>
                <div class="form-group">
                   <label style="font-weight: normal; text-align: justify;" class="questions"><b><?php echo "Question" . " " . $counter++; ?></b>&nbsp<?php echo $questions; ?></label><br>
@@ -328,6 +328,8 @@ function startTimer() {
     }
   }, 10);
 }
+
+
 
 $('.cont').addClass('hide');
     count=$('.questions').length;
