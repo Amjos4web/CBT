@@ -34,7 +34,7 @@ if (isset($_POST['add'])){
   $option_C = $_POST['option_C'];
   $option_D = $_POST['option_D'];
   $correct_answer = $_POST['correct_answer'];
-  $date_added = date('Y-m-d H-i-s');
+  $date_added = date('Y-m-d H:i:s');
   // generate pin for this email
   for ($index = 0; $index < 1; $index++){
     $rand = mt_rand(1000000000, (int)9999999999);

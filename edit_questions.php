@@ -52,6 +52,7 @@ $counter = 1;
                 <div class="col-md-4">
                     <div class="cta-btn">
                       <a href="admin_logout.php" class="btn btn-info">Log Out</a>
+                      <a href="admin_dashboard.php" class="btn btn-info">Go back <<<</a>
                     </div>
                 </div>
               </div>
@@ -89,113 +90,29 @@ $counter = 1;
           if (empty($course) == false)
           {
             if($_GET['search_by_course'] == "course001"){
-              $course_selected = $_GET['search_by_course'];
-
-              $select_course = "SELECT * FROM questions WHERE `course_title`='".$course_selected."' ORDER BY `date_added` ASC";
-              $check_query = $conn->query($select_course);
-              if ($check_query->num_rows > 0)
-              {
-                while($fetch = $check_query->fetch_assoc()){
-                  $question_id = $fetch['id'];
-                  $date_added = $fetch['date_added'];
-                  $course_title = $fetch['course_title'];
-                  $date=strftime("%d %b, %Y %H:%M:%S",strtotime($fetch['date_added']));
-
-
-                  $results .= "<tr style='text-align: center;'>";
-                  $results .= "<td>".$counter++. "</td>";
-                  //$results .= "<td>".$question_id. "</td>";
-                  $results .= "<td>".$course_title."</td>"; 
-                  $results .= "<td>".$date_added."</td>";
-                  $results .= '<td><a href="edit.php?question_id='.$question_id.'" class="btn btn-primary">Edit</a></td>';
-                  $results .= '<td><input type="submit" name="delete" value="Delete" class="btn btn-danger"></td>';
-                  $results .= "</tr>";
-
+              require_once "includes/select_query.php";
+            } else if ($_GET['search_by_course'] == "course002"){
+              require_once "includes/select_query.php";
+            } else if ($_GET['search_by_course'] == "course003"){
+              require_once "includes/select_query.php";
+            } else if ($_GET['search_by_course'] == "course004"){
+              require_once "includes/select_query.php";
+            } else if ($_GET['search_by_course'] == "Null"){
+              echo '<script type="text/javascript">';
+              echo 'setTimeout(function () { 
+              swal({
+                title: "Error!",
+                text: "Please Select Course",
+                type: "warning",
+                confirmButtonText: "OK"
+              },
+              function(isConfirm){
+                if (isConfirm) {
+                  window.location.href = "edit_questions.php";
                 }
-
-                echo '<div class="col-md-12">
-                        <center><h3>'.$check_query->num_rows.' Results Found For '.$course_selected.'</h3></center>
-                        <hr>
-                       <div style="max-height: 350px; overflow-x: auto">
-                         <table class="table table-bordered" style="font-family: arial;">
-                          <thead>
-                            <tr class="info" style="text-transform: uppercase; text-align: center;">
-                              <th style="text-align: center;">sn</th>
-                              <th style="text-align: center;">course Title</th>
-                              <th style="text-align: center;">date Added</th>
-                              <th style="text-align: center;">edit</th>
-                              <th style="text-align: center;">delete</th>
-                            </tr>
-                          </thead>
-                          '.$results.'
-                          </table>
-                        </div>
-                      </div>';
-                
-            
-              } else if ($_GET['search_by_course'] == "course002")
-              {
-                echo $_GET['search_by_course']; die();
-                $course_selected = $_GET['search_by_course'];
-
-                $select_course = "SELECT * FROM questions WHERE `course_title`='".$_GET['search_by_course']."' ORDER BY `date_added` ASC";
-                $check_query = $conn->query($select_course);
-                if ($check_query->num_rows > 0)
-                {
-                  while($fetch = $check_query->fetch_assoc()){
-                    $question_id = $fetch['id'];
-                    $date_added = $fetch['date_added'];
-                    $course_title = $fetch['course_title'];
-                    $date=strftime("%d %b, %Y %H:%M:%S",strtotime($fetch['date_added']));
-
-
-                    $results .= "<tr style='text-align: center;'>";
-                    $results .= "<td>".$counter++. "</td>";
-                    //$results .= "<td>".$question_id. "</td>";
-                    $results .= "<td>".$course_title."</td>"; 
-                    $results .= "<td>".$date_added."</td>";
-                    $results .= '<td><a href="edit.php?question_id='.$question_id.'" class="btn btn-primary">Edit</a></td>';
-                    $results .= '<td><input type="submit" name="delete" value="Delete" class="btn btn-danger"></td>';
-                    $results .= "</tr>";
-
-                  }
-
-                  echo '<div class="col-md-12">
-                        <center><h3>'.$check_query->num_rows.' Results Found For '.$course_selected.'</h3></center>
-                        <hr>
-                         <div style="max-height: 350px; overflow-x: auto">
-                           <table class="table table-bordered" style="font-family: arial;">
-                            <thead>
-                              <tr class="info" style="text-transform: uppercase; text-align: center;">
-                                <th style="text-align: center;">sn</th>
-                                <th style="text-align: center;">course Title</th>
-                                <th style="text-align: center;">date Added</th>
-                                <th style="text-align: center;">edit</th>
-                                <th style="text-align: center;">delete</th>
-                              </tr>
-                            </thead>
-                            '.$results.'
-                            </table>
-                          </div>
-                        </div>';
-                } else {
-                  echo '<script type="text/javascript">';
-                  echo 'setTimeout(function () { 
-                  swal({
-                    title: "Opps!",
-                    text: "No result found",
-                    type: "warning",
-                    confirmButtonText: "OK"
-                  },
-                  function(isConfirm){
-                    if (isConfirm) {
-                      window.location.href = "edit_questions.php";
-                    }
-                  }); }, 500)';
-                  echo '</script>';
-                }
-              }
-            }
+              }); }, 500)';
+              echo '</script>';
+            } 
           } else {
             echo '<script type="text/javascript">';
             echo 'setTimeout(function () { 
@@ -213,6 +130,7 @@ $counter = 1;
             echo '</script>';
           }
         }
+
 ?>
 </div>
 <div class="row">

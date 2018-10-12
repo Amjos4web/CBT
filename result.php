@@ -74,7 +74,7 @@ if (isset($_POST['submit'])){
           $percentage_score = ($resultcount / $question_rowcount) * 100 . "%";
           //echo $percentage_score; exit();
 
-          $date_taken = date('Y-m-d:h:i:s');
+          $date_taken = date('Y-m-d H:i:s');
 
 
           $insertresult = "INSERT INTO result (`username`, `fullname`, `result`, `matricNo`, `date_taken`, `course_title`, `percentage_score`) VALUES ('$username', '$fullname', '$resultcount', '$matricNo', '$date_taken', '$course_title', '$percentage_score')";
